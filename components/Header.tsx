@@ -1,6 +1,11 @@
+'use client';
+
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 export default function Header() {
+  const { user } = useAuth();
+
   return (
     <header className="bg-blue-600 text-white shadow-md">
       <div className="container mx-auto px-4 py-4">
@@ -14,7 +19,7 @@ export default function Header() {
             </Link>
           </div>
 
-          <div className="flex space-x-6">
+          <div className="flex items-center space-x-6">
             <Link href="/" className="hover:text-blue-100 transition">
               Home
             </Link>
@@ -27,6 +32,16 @@ export default function Header() {
             <Link href="/learn" className="hover:text-blue-100 transition">
               Learn
             </Link>
+
+            {user ? (
+              <Link href="/dashboard" className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-blue-50 transition">
+                Dashboard
+              </Link>
+            ) : (
+              <Link href="/login" className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-blue-50 transition">
+                Login
+              </Link>
+            )}
           </div>
         </nav>
       </div>
