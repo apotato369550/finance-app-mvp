@@ -24,7 +24,7 @@ export default function Home() {
           </p>
         </Link>
 
-        <Link href="/funds" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
+        <Link href="/fund-analysis" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
           <div className="text-4xl mb-4">💰</div>
           <h2 className="text-xl font-semibold mb-2">Analyze Funds</h2>
           <p className="text-gray-600">
@@ -32,7 +32,7 @@ export default function Home() {
           </p>
         </Link>
 
-        <Link href="/learn" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
+        <Link href="/content" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
           <div className="text-4xl mb-4">📚</div>
           <h2 className="text-xl font-semibold mb-2">Learn</h2>
           <p className="text-gray-600">

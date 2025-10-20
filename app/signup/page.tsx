@@ -61,10 +61,12 @@ export default function SignupPage() {
     }
   };
 
+  const devMode = typeof window !== 'undefined' && localStorage.getItem('DEV_MODE') === 'true';
+
   return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
+    <div className="max-w-md mx-auto px-4 py-8">
+      <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">Sign Up</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -74,7 +76,7 @@ export default function SignupPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm md:text-base font-medium text-gray-700 mb-2">
               Email
             </label>
             <input
@@ -82,14 +84,14 @@ export default function SignupPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="you@example.com"
               disabled={loading}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm md:text-base font-medium text-gray-700 mb-2">
               Password
             </label>
             <input
@@ -97,7 +99,7 @@ export default function SignupPage() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
               disabled={loading}
             />
@@ -105,7 +107,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="confirmPassword" className="block text-sm md:text-base font-medium text-gray-700 mb-2">
               Confirm Password
             </label>
             <input
@@ -113,7 +115,7 @@ export default function SignupPage() {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
               disabled={loading}
             />
@@ -122,14 +124,14 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 text-white py-3 text-base rounded-md font-semibold hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed min-h-[44px]"
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-sm md:text-base">
             Already have an account?{' '}
             <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
               Login
@@ -137,9 +139,9 @@ export default function SignupPage() {
           </p>
         </div>
 
-        {process.env.NEXT_PUBLIC_DEV_MODE === 'true' && (
+        {devMode && (
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-xs text-yellow-800 text-center">
+            <p className="text-xs md:text-sm text-yellow-800 text-center">
               <strong>DEV MODE:</strong> Any email/password will work
             </p>
           </div>

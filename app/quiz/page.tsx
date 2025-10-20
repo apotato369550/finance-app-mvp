@@ -60,7 +60,7 @@ export default function QuizPage() {
 
   const handleSubmit = async () => {
     // Check if DEV_MODE is enabled
-    const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+    const devMode = localStorage.getItem('DEV_MODE') === 'true';
 
     let analysisResult: AnalysisResult;
 
@@ -101,9 +101,9 @@ export default function QuizPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold mb-6">Financial Analysis Quiz</h1>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6">Financial Analysis Quiz</h1>
 
         {/* Progress indicator */}
         <div className="mb-8">
@@ -127,7 +127,7 @@ export default function QuizPage() {
             <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
                 Occupation Type
               </label>
               <select
@@ -135,7 +135,7 @@ export default function QuizPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, occupation: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">Select your occupation</option>
                 {OCCUPATION_OPTIONS.map((option) => (
@@ -154,11 +154,11 @@ export default function QuizPage() {
             <h2 className="text-xl font-semibold mb-4">Financial Snapshot</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
                 Monthly Income (after deductions)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">₱</span>
+                <span className="absolute left-3 top-3 text-gray-500">₱</span>
                 <input
                   type="number"
                   min="0"
@@ -169,18 +169,18 @@ export default function QuizPage() {
                       monthlyIncome: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-8 pr-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="0.00"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
                 Monthly Expenses
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">₱</span>
+                <span className="absolute left-3 top-3 text-gray-500">₱</span>
                 <input
                   type="number"
                   min="0"
@@ -191,14 +191,14 @@ export default function QuizPage() {
                       monthlyExpenses: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-8 pr-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="0.00"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
                 Do you have a bank account?
               </label>
               <div className="flex gap-4">
@@ -207,7 +207,7 @@ export default function QuizPage() {
                   onClick={() =>
                     setFormData({ ...formData, hasBankAccount: true })
                   }
-                  className={`flex-1 py-2 px-4 rounded-md border transition ${
+                  className={`flex-1 py-3 px-4 text-base rounded-md border transition min-h-[44px] ${
                     formData.hasBankAccount
                       ? 'bg-blue-600 text-white border-blue-600'
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -220,7 +220,7 @@ export default function QuizPage() {
                   onClick={() =>
                     setFormData({ ...formData, hasBankAccount: false })
                   }
-                  className={`flex-1 py-2 px-4 rounded-md border transition ${
+                  className={`flex-1 py-3 px-4 text-base rounded-md border transition min-h-[44px] ${
                     !formData.hasBankAccount
                       ? 'bg-blue-600 text-white border-blue-600'
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -239,7 +239,7 @@ export default function QuizPage() {
             <h2 className="text-xl font-semibold mb-4">Tell Us More</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
                 What would you do if you had 100,000 pesos?
               </label>
               <textarea
@@ -250,7 +250,7 @@ export default function QuizPage() {
                     setFormData({ ...formData, essayResponse: value });
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 rows={6}
                 placeholder="Share your thoughts..."
               />
@@ -266,7 +266,7 @@ export default function QuizPage() {
           <button
             onClick={handlePrevious}
             disabled={currentSection === 0}
-            className={`px-6 py-2 rounded-md transition ${
+            className={`px-6 py-3 text-base rounded-md transition min-h-[44px] ${
               currentSection === 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -279,7 +279,7 @@ export default function QuizPage() {
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className={`px-6 py-2 rounded-md transition ${
+              className={`px-6 py-3 text-base rounded-md transition min-h-[44px] ${
                 canProceed()
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -291,7 +291,7 @@ export default function QuizPage() {
             <button
               onClick={handleSubmit}
               disabled={!canProceed()}
-              className={`px-6 py-2 rounded-md transition ${
+              className={`px-6 py-3 text-base rounded-md transition min-h-[44px] ${
                 canProceed()
                   ? 'bg-green-600 text-white hover:bg-green-700'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
