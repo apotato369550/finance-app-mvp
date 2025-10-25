@@ -42,7 +42,18 @@ export interface ContentItem {
 }
 
 // Onboarding types
-export type ResponseType = "text" | "number" | "choice" | "scale";
+export type ResponseType = "text" | "number" | "choice" | "scale_1_5" | "scale_1_10";
+export type QuestionCategory = "mindset" | "behavior" | "numbers" | "goals";
+
+export interface OnboardingQuestion {
+  id: string;
+  text: string;
+  type: ResponseType;
+  options?: string[];
+  category: QuestionCategory;
+  required: boolean;
+  order: number;
+}
 
 export interface OnboardingResponse {
   id?: string;

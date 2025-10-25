@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS onboarding_response (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     question_id TEXT NOT NULL,
     question_text TEXT NOT NULL,
-    response_type TEXT NOT NULL CHECK (response_type IN ('text', 'number', 'choice', 'scale')),
+    response_type TEXT NOT NULL CHECK (response_type IN ('text', 'number', 'choice', 'scale_1_5', 'scale_1_10')),
     response_value JSONB NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
