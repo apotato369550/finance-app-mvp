@@ -57,7 +57,8 @@ export default function SignupPage() {
       setError(error.message || 'Failed to sign up');
       setLoading(false);
     } else {
-      router.push('/dashboard');
+      // Redirect to onboarding for new users
+      router.push('/onboarding');
     }
   };
 

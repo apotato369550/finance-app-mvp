@@ -5,10 +5,19 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import type { AnalysisResult } from '@/lib/mockAnalysis';
 
+interface OnboardingStatus {
+  completed: boolean;
+  skipped: boolean;
+  completion_percentage: number;
+  profile_exists: boolean;
+}
+
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [onboardingStatus, setOnboardingStatus] = useState<OnboardingStatus | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -27,6 +36,27 @@ export default function DashboardPage() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    // Fetch onboarding status
+    const fetchOnboardingStatus = async () => {
+      try {
+        const response = await fetch('/api/onboarding/status');
+        if (response.ok) {
+          const data = await response.json();
+          setOnboardingStatus(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch onboarding status:', error);
+      } finally {
+        setLoadingStatus(false);
+      }
+    };
+
+    if (user) {
+      fetchOnboardingStatus();
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -115,18 +145,47 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Onboarding Status Banner */}
+        {!loadingStatus && onboardingStatus && !onboardingStatus.completed && !onboardingStatus.skipped && (
+          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-blue-900 mb-2">Complete Your Profile</h3>
+                <p className="text-sm text-blue-700">
+                  Get personalized insights by completing your financial personality profile
+                </p>
+              </div>
+              <button
+                onClick={() => router.push('/onboarding')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium whitespace-nowrap"
+              >
+                Complete Profile →
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="border rounded-lg p-6 hover:shadow-md transition">
-            <h3 className="text-base md:text-lg font-semibold mb-2">Quiz Analysis</h3>
+            <h3 className="text-base md:text-lg font-semibold mb-2">Financial Profile</h3>
             <p className="text-gray-600 text-sm md:text-base mb-4">
-              Get personalized financial insights
+              View your personality profile and insights
             </p>
-            <button
-              onClick={() => router.push('/quiz')}
-              className="text-blue-600 hover:text-blue-700 font-medium text-sm md:text-base min-h-[44px]"
-            >
-              {analysis ? 'Retake Quiz →' : 'Start Quiz →'}
-            </button>
+            {onboardingStatus?.completed ? (
+              <button
+                onClick={() => router.push('/profile')}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm md:text-base min-h-[44px]"
+              >
+                View Profile →
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push('/onboarding')}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm md:text-base min-h-[44px]"
+              >
+                Start Profile →
+              </button>
+            )}
           </div>
 
           <div className="border rounded-lg p-6 hover:shadow-md transition">

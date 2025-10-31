@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install)",
-      "Bash(npm run dev)"
+      "Bash(npm run build:*)",
+      "Bash(timeout 30 npm run dev:*)"
     ],
     "deny": [],
     "ask": []

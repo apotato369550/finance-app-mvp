@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation';
 export default function SettingsPage() {
   const [devMode, setDevMode] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { user, logout } = useAuth();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { user, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -36,9 +38,53 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     router.push('/');
+  };
+
+  const handleDeleteProfileData = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/profile/delete', { method: 'DELETE' });
+      if (response.ok) {
+        setShowSuccess(true);
+        setShowDeleteModal(false);
+        setTimeout(() => {
+          setShowSuccess(false);
+          router.push('/dashboard');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      alert('Failed to delete profile data');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleExportProfileData = async () => {
+    try {
+      const response = await fetch('/api/profile/export');
+      if (response.ok) {
+        const data = await response.json();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `profile-data-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error exporting profile:', error);
+      alert('Failed to export profile data');
+    }
+  };
+
+  const handleRetakeProfile = () => {
+    router.push('/onboarding');
   };
 
   return (
@@ -58,7 +104,80 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4 text-red-600">Delete Profile Data?</h3>
+            <p className="text-gray-600 mb-6">
+              This will permanently delete all your onboarding responses and generated profile. This action cannot be undone.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProfileData}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
+        {/* Profile & Onboarding Section */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Profile & Onboarding</h2>
+          <div className="space-y-4">
+            <div className="pb-4 border-b">
+              <h3 className="font-semibold text-gray-900 mb-2">Retake Profile</h3>
+              <p className="text-sm md:text-base text-gray-600 mb-3">
+                Start the onboarding process again to update your financial personality profile.
+              </p>
+              <button
+                onClick={handleRetakeProfile}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition min-h-[44px] text-base"
+              >
+                Start Onboarding →
+              </button>
+            </div>
+
+            <div className="pb-4 border-b">
+              <h3 className="font-semibold text-gray-900 mb-2">Export Profile Data</h3>
+              <p className="text-sm md:text-base text-gray-600 mb-3">
+                Download a JSON file containing all your responses and generated profile for backup or transparency.
+              </p>
+              <button
+                onClick={handleExportProfileData}
+                className="bg-gray-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-gray-700 transition min-h-[44px] text-base"
+              >
+                Export Data
+              </button>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Delete Profile Data</h3>
+              <p className="text-sm md:text-base text-gray-600 mb-3">
+                Permanently remove all your onboarding responses and profile. You can always retake the profile later.
+              </p>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition min-h-[44px] text-base"
+              >
+                Delete Profile Data
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Dev Mode Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between mb-4">
