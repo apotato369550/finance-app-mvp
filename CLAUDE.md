@@ -123,17 +123,17 @@ FinanceEd PH is a Filipino-focused personal finance education platform designed 
 **Working with this Project:**
 
 1. **Check Mode:** Always verify if working in dev (mock) or production mode
-2. **Read READMEs:** Check app/api/onboarding/README.md and lib/README-onboarding.md for context
+2. **Read Context:** Check CLAUDE.md files in relevant directories for specific context
 3. **Follow Patterns:** Use existing code patterns for consistency
 4. **Test Both Modes:** Ensure changes work in both mock and production modes
-5. **Document Changes:** Keep READMEs updated if APIs or structures change
+5. **Document Changes:** **UPDATE CHANGELOG.md after every change, refactor, or feature addition**
 
 **Common Tasks:**
 
-- **Adding API Endpoint:** Follow pattern in app/api/onboarding/, support both modes
-- **Database Changes:** Create migration in supabase/migrations/, update types
+- **Adding API Endpoint:** Follow pattern in app/api/, support both modes, update app/api/CLAUDE.md
+- **Database Changes:** Create migration in supabase/migrations/, update types, document in CHANGELOG.md
 - **New Components:** Place in /components, use TypeScript, make responsive
-- **Utility Functions:** Add to appropriate file in /lib
+- **Utility Functions:** Add to appropriate file in /lib, document purpose
 
 **Quality Checks:**
 
@@ -142,10 +142,14 @@ FinanceEd PH is a Filipino-focused personal finance education platform designed 
 - Authentication works in both modes
 - Mobile responsive design verified
 - Error handling implemented
+- CHANGELOG.md updated with changes
 
-**File Organization:**
+**Directory Context Files:**
 
-- Keep API-related READMEs in app/api/
-- Keep lib-related READMEs in lib/
-- Use descriptive file names
-- Group related functionality together
+Each major directory contains a CLAUDE.md file providing context about:
+- Purpose and scope
+- Key files and their responsibilities
+- Patterns to follow
+- Common gotchas
+
+Check these files before making changes in a directory.
