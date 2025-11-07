@@ -4,6 +4,20 @@ All notable changes to the FinanceEd PH project will be documented in this file.
 
 Format: `[YYYY-MM-DD] - Description of change`
 
+## [2025-11-08] - UI/UX Overhaul and Bug Fixes
+- Fixed input fields and textboxes not clearing after submitting answers in onboarding quiz
+- Fixed multiple choice selections not deselecting when moving to next question
+- Removed dark mode auto-switching that caused black background with white text issues
+- Implemented sleek and elegant design system with blue, white, and black color scheme
+- Added rounded corners (rounded-xl, rounded-2xl, rounded-3xl) throughout the application
+- Enhanced onboarding page with gradient backgrounds and improved card styling
+- Updated home page with larger cards, hover animations, and gradient CTA section
+- Improved quiz page styling with better form inputs and enhanced button designs
+- Made all onboarding questions required - users can delay completion but cannot skip individual questions
+- Changed "Skip for now" to "Complete later" to clarify that questions cannot be skipped
+- Updated global CSS with better font stack and custom scrollbar styling
+- Added smooth transitions and shadow effects throughout the application
+
 ## [2025-11-07] - Documentation Structure Overhaul
 - Created CHANGELOG.md for tracking all project changes
 - Updated root CLAUDE.md with CHANGELOG reminder and directory context file references

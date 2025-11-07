@@ -2,55 +2,55 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <section className="text-center py-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Welcome to FinanceEd PH
+    <div className="max-w-6xl mx-auto px-4">
+      <section className="text-center py-16 md:py-20">
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          Welcome to <span className="text-blue-600">FinanceEd PH</span>
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl md:text-2xl text-gray-600 mb-6 max-w-3xl mx-auto">
           Your personal finance education platform designed for Filipinos
         </p>
-        <p className="text-gray-700 mb-8">
-          Learn about investing, analyze funds, and get personalized financial insights
+        <p className="text-lg text-gray-700 mb-10 max-w-2xl mx-auto leading-relaxed">
+          Learn about investing, analyze funds, and get personalized financial insights to secure your financial future
         </p>
       </section>
 
-      <section className="grid md:grid-cols-3 gap-6 mb-12">
-        <Link href="/quiz" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-          <div className="text-4xl mb-4">📊</div>
-          <h2 className="text-xl font-semibold mb-2">Take the Quiz</h2>
-          <p className="text-gray-600">
+      <section className="grid md:grid-cols-3 gap-8 mb-16">
+        <Link href="/quiz" className="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200">
+          <div className="text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">📊</div>
+          <h2 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">Take the Quiz</h2>
+          <p className="text-gray-600 leading-relaxed">
             Get personalized financial insights based on your situation and goals
           </p>
         </Link>
 
-        <Link href="/fund-analysis" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-          <div className="text-4xl mb-4">💰</div>
-          <h2 className="text-xl font-semibold mb-2">Analyze Funds</h2>
-          <p className="text-gray-600">
+        <Link href="/fund-analysis" className="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200">
+          <div className="text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">💰</div>
+          <h2 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">Analyze Funds</h2>
+          <p className="text-gray-600 leading-relaxed">
             Compare and analyze different investment funds available in the Philippines
           </p>
         </Link>
 
-        <Link href="/content" className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-          <div className="text-4xl mb-4">📚</div>
-          <h2 className="text-xl font-semibold mb-2">Learn</h2>
-          <p className="text-gray-600">
+        <Link href="/content" className="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200">
+          <div className="text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">📚</div>
+          <h2 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">Learn</h2>
+          <p className="text-gray-600 leading-relaxed">
             Access curated financial education content tailored for Filipino investors
           </p>
         </Link>
       </section>
 
-      <section className="bg-blue-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Ready to Start Your Financial Journey?</h2>
-        <p className="text-gray-700 mb-6">
-          Take our quick quiz to understand your financial profile and get started
+      <section className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-10 md:p-14 text-center mb-16 shadow-2xl">
+        <h2 className="text-3xl md:text-4xl font-bold mb-5 text-white">Ready to Start Your Financial Journey?</h2>
+        <p className="text-lg md:text-xl text-blue-50 mb-8 max-w-2xl mx-auto leading-relaxed">
+          Take our quick quiz to understand your financial profile and get personalized recommendations
         </p>
         <Link
           href="/quiz"
-          className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          className="inline-block bg-white text-blue-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform"
         >
-          Start Quiz
+          Start Quiz Now →
         </Link>
       </section>
     </div>
