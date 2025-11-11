@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, isDevMode } from './supabase';
+import { supabase, isMockMode, getTestMode } from './supabase';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -21,15 +21,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    if (isDevMode()) {
-      // In dev mode, check localStorage
+    if (isMockMode()) {
+      // In mock mode, check localStorage
+      console.log(`[${getTestMode()}] Using mock authentication`);
       const mockUser = localStorage.getItem('mockUser');
       if (mockUser) {
         setUser(JSON.parse(mockUser));
       }
       setLoading(false);
     } else {
-      // In production mode, check Supabase session
+      // In DEV/LIVE mode, check Supabase session
+      console.log(`[${getTestMode()}] Using Supabase authentication`);
       supabase.auth.getSession().then(({ data: { session } }) => {
         setUser(session?.user ?? null);
         setLoading(false);
@@ -47,8 +49,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    if (isDevMode()) {
-      // Mock signup in dev mode
+    if (isMockMode()) {
+      // Mock signup in mock mode
+      console.log(`[${getTestMode()}] Mock signup for ${email}`);
       const mockUser: SupabaseUser = {
         id: `mock-${Date.now()}`,
         email,
@@ -61,15 +64,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(mockUser);
       return { error: null };
     } else {
-      // Real Supabase signup
+      // Real Supabase signup in DEV/LIVE mode
+      console.log(`[${getTestMode()}] Real signup for ${email}`);
       const { error } = await supabase.auth.signUp({ email, password });
       return { error };
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    if (isDevMode()) {
-      // Mock login in dev mode
+    if (isMockMode()) {
+      // Mock login in mock mode
+      console.log(`[${getTestMode()}] Mock login for ${email}`);
       const mockUser: SupabaseUser = {
         id: `mock-${Date.now()}`,
         email,
@@ -82,7 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(mockUser);
       return { error: null };
     } else {
-      // Real Supabase login
+      // Real Supabase login in DEV/LIVE mode
+      console.log(`[${getTestMode()}] Real login for ${email}`);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -92,12 +98,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    if (isDevMode()) {
-      // Mock logout in dev mode
+    if (isMockMode()) {
+      // Mock logout in mock mode
+      console.log(`[${getTestMode()}] Mock logout`);
       localStorage.removeItem('mockUser');
       setUser(null);
     } else {
-      // Real Supabase logout
+      // Real Supabase logout in DEV/LIVE mode
+      console.log(`[${getTestMode()}] Real logout`);
       await supabase.auth.signOut();
     }
   };

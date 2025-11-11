@@ -1,9 +1,12 @@
 import { NextRequest } from 'next/server';
-import { isDevMode } from './supabase';
+import { getTestMode, isMockMode } from './supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export async function getAuthenticatedUser(request: NextRequest) {
-  if (isDevMode()) {
-    // In dev mode, check for mock user in Authorization header or cookie
+  const mode = getTestMode();
+
+  if (mode === 'MOCK') {
+    // In mock mode, check for mock user in Authorization header or cookie
     const authHeader = request.headers.get('authorization');
     const mockUser = authHeader?.replace('Bearer ', '');
 
@@ -26,33 +29,38 @@ export async function getAuthenticatedUser(request: NextRequest) {
     }
 
     return null;
-  } else {
-    // In production, use Supabase auth token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+  }
+
+  // DEV or LIVE mode - use Supabase auth token from Authorization header
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+
+  try {
+    // Get appropriate Supabase config based on mode
+    const supabaseUrl = mode === 'DEV'
+      ? process.env.NEXT_PUBLIC_SUPABASE_URL_DEV!
+      : process.env.NEXT_PUBLIC_SUPABASE_URL_LIVE!;
+
+    const supabaseKey = mode === 'DEV'
+      ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_DEV!
+      : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_LIVE!;
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
       return null;
     }
 
-    const token = authHeader.replace('Bearer ', '');
-
-    try {
-      // Verify the token with Supabase
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-
-      if (error || !user) {
-        return null;
-      }
-
-      return user;
-    } catch {
-      return null;
-    }
+    return user;
+  } catch (error) {
+    console.error('Auth error:', error);
+    return null;
   }
 }
 

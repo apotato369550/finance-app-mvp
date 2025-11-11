@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-utils';
-import { supabase, isDevMode } from '@/lib/supabase';
+import { supabase, isMockMode, getTestMode } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,8 +15,9 @@ export async function GET(request: NextRequest) {
 
     const userId = authResult.user!.id;
 
-    if (isDevMode()) {
-      // In dev mode, return mock status
+    if (isMockMode()) {
+      // In mock mode, return mock status
+      console.log(`[${getTestMode()}] Returning mock onboarding status`);
       return NextResponse.json({
         completed: false,
         skipped: false,
@@ -24,7 +25,9 @@ export async function GET(request: NextRequest) {
         profile_exists: false,
       });
     } else {
-      // In production, query the database
+      // In DEV/LIVE mode, query the database
+      console.log(`[${getTestMode()}] Fetching onboarding status for user ${userId}`);
+
       // Check onboarding profile
       const { data: profile, error: profileError } = await supabase
         .from('onboarding_profile')

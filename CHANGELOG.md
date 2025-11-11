@@ -4,6 +4,23 @@ All notable changes to the FinanceEd PH project will be documented in this file.
 
 Format: `[YYYY-MM-DD] - Description of change`
 
+## [2025-11-12] - TEST_MODE System Implementation
+- **BREAKING**: Replaced `NEXT_PUBLIC_DEV_MODE` with comprehensive `NEXT_PUBLIC_TEST_MODE` system
+- Added support for three test modes: MOCK, DEV, and LIVE
+- **MOCK Mode**: No authentication, uses mock data only (fastest for UI development)
+- **DEV Mode**: Uses local Supabase instance at http://127.0.0.1:54321 (requires `supabase start`)
+- **LIVE Mode**: Uses remote Supabase server (production/staging)
+- Updated `.env.local` and `.env.example` with new configuration structure
+- Separated Supabase credentials into `_DEV` and `_LIVE` variants
+- Refactored `lib/supabase.ts` to support mode detection and appropriate client creation
+- Updated `lib/auth-utils.ts` to use new mode system (isMockMode, isDevMode, isLiveMode)
+- Updated `lib/auth-context.tsx` for proper authentication handling across all modes
+- Updated API routes (`/onboarding/answer`, `/onboarding/status`) to use new mode detection
+- Added comprehensive logging with mode prefixes: `[MOCK]`, `[DEV]`, `[LIVE]`
+- Fixed Supabase config.toml by removing deprecated `double_confirm_email_changes` option
+- Created `TEST_MODE_GUIDE.md` with complete testing instructions for all three modes
+- Local Supabase anon key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (standard demo key)
+
 ## [2025-11-08] - UI/UX Overhaul and Bug Fixes
 - Fixed input fields and textboxes not clearing after submitting answers in onboarding quiz
 - Fixed multiple choice selections not deselecting when moving to next question

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-utils';
 import { getQuestionById } from '@/lib/onboarding-questions';
-import { supabase, isDevMode } from '@/lib/supabase';
+import { supabase, isMockMode, getTestMode } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,17 +33,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (isDevMode()) {
-      // In dev mode, just return success (mock save)
-      console.log(`Dev mode: Would save answer for user ${userId}, question ${question_id}:`, response_value);
+    if (isMockMode()) {
+      // In mock mode, just return success (no database save)
+      console.log(`[${getTestMode()}] Mock save: answer for user ${userId}, question ${question_id}:`, response_value);
       return NextResponse.json({
         success: true,
-        message: 'Answer saved (dev mode)',
+        message: 'Answer saved (mock mode)',
         completion_percentage: 0, // Will be calculated on frontend
         next_question_id: null, // Will be handled on frontend
       });
     } else {
-      // In production, save to database
+      // In DEV/LIVE mode, save to database
+      console.log(`[${getTestMode()}] Saving answer for user ${userId}, question ${question_id}`);
+
       const { error } = await supabase
         .from('onboarding_response')
         .upsert({
