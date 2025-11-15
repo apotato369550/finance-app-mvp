@@ -7,7 +7,7 @@ import { OnboardingProfile } from '@/types';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, getAuthHeader } = useAuth();
   const [profile, setProfile] = useState<OnboardingProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRetakeModal, setShowRetakeModal] = useState(false);
@@ -28,9 +28,10 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     setLoading(true);
     try {
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/profile', {
         headers: {
-          Authorization: `Bearer ${user?.id || ''}`,
+          Authorization: authHeader,
         },
       });
 
@@ -49,7 +50,13 @@ export default function ProfilePage() {
 
   const handleRetake = async () => {
     try {
-      await fetch('/api/onboarding/reset', { method: 'POST' });
+      const authHeader = await getAuthHeader();
+      await fetch('/api/onboarding/reset', {
+        method: 'POST',
+        headers: {
+          Authorization: authHeader,
+        },
+      });
       router.push('/onboarding');
     } catch (error) {
       console.error('Error resetting onboarding:', error);

@@ -1,16 +1,24 @@
-import { createClient } from '@supabase/supabase-js';
-import { isDevMode } from '@/lib/supabase';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth, getAuthenticatedSupabaseClient } from '@/lib/auth-utils';
+import { isMockMode, getTestMode } from '@/lib/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    if (isDevMode()) {
-      // In dev mode, return mock profile
-      return Response.json({
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
+    }
+
+    const userId = authResult.user!.id;
+
+    if (isMockMode()) {
+      // In mock mode, return mock profile
+      console.log(`[${getTestMode()}] Returning mock profile`);
+      return NextResponse.json({
         exists: true,
         profile: {
           personality_type: 'The Balanced Builder',
@@ -36,38 +44,39 @@ export async function GET(request: Request) {
       });
     }
 
-    // Get user from auth header
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // In DEV/LIVE mode, fetch from database
+    console.log(`[${getTestMode()}] Fetching profile for user ${userId}`);
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
-
-    if (userError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Get authenticated Supabase client (with user's JWT token for RLS)
+    const supabase = getAuthenticatedSupabaseClient(request);
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Failed to create authenticated client' },
+        { status: 500 }
+      );
     }
 
     // Fetch profile from database
     const { data, error } = await supabase
       .from('onboarding_profile')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single();
 
     if (error || !data) {
-      return Response.json({ exists: false });
+      console.log(`[${getTestMode()}] No profile found for user ${userId}`);
+      return NextResponse.json({ exists: false });
     }
 
-    return Response.json({
+    return NextResponse.json({
       exists: true,
       profile: data,
     });
   } catch (error) {
     console.error('Profile fetch error:', error);
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

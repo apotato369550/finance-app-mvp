@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   logout?: () => Promise<void>;
+  getAuthHeader: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -110,8 +111,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getAuthHeader = async () => {
+    if (isMockMode()) {
+      // In mock mode, send the entire user object
+      return `Bearer ${JSON.stringify(user)}`;
+    } else {
+      // In DEV/LIVE mode, get the session token from Supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      return `Bearer ${session?.access_token || ''}`;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, logout: signOut }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, logout: signOut, getAuthHeader }}>
       {children}
     </AuthContext.Provider>
   );

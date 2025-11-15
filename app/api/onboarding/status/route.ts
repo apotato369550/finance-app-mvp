@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth-utils';
-import { supabase, isMockMode, getTestMode } from '@/lib/supabase';
+import { requireAuth, getAuthenticatedSupabaseClient } from '@/lib/auth-utils';
+import { isMockMode, getTestMode } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,6 +27,15 @@ export async function GET(request: NextRequest) {
     } else {
       // In DEV/LIVE mode, query the database
       console.log(`[${getTestMode()}] Fetching onboarding status for user ${userId}`);
+
+      // Get authenticated Supabase client (with user's JWT token for RLS)
+      const supabase = getAuthenticatedSupabaseClient(request);
+      if (!supabase) {
+        return NextResponse.json(
+          { error: 'Failed to create authenticated client' },
+          { status: 500 }
+        );
+      }
 
       // Check onboarding profile
       const { data: profile, error: profileError } = await supabase

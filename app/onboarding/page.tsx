@@ -230,7 +230,7 @@ const QuestionScreen = ({
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, getAuthHeader } = useAuth();
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -264,11 +264,12 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       // Update privacy_consent_at in the database
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/onboarding/privacy-consent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.stringify(user)}`,
+          'Authorization': authHeader,
         },
         body: JSON.stringify({}),
       });
@@ -284,11 +285,12 @@ export default function OnboardingPage() {
   const handleSkip = async () => {
     setLoading(true);
     try {
+      const authHeader = await getAuthHeader();
       await fetch('/api/onboarding/skip', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.stringify(user)}`,
+          'Authorization': authHeader,
         },
       });
       router.push('/dashboard');
@@ -300,11 +302,12 @@ export default function OnboardingPage() {
   const handleAnswer = async (response: Omit<OnboardingResponse, 'user_id' | 'id' | 'created_at' | 'updated_at'>) => {
     setLoading(true);
     try {
+      const authHeader = await getAuthHeader();
       const res = await fetch('/api/onboarding/answer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.stringify(user)}`,
+          'Authorization': authHeader,
         },
         body: JSON.stringify(response),
       });
@@ -325,7 +328,7 @@ export default function OnboardingPage() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${JSON.stringify(user)}`,
+              'Authorization': authHeader,
             },
           });
 

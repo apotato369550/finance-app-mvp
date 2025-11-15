@@ -1,48 +1,58 @@
-import { createClient } from '@supabase/supabase-js';
-import { isDevMode } from '@/lib/supabase';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth, getAuthenticatedSupabaseClient } from '@/lib/auth-utils';
+import { isMockMode, getTestMode } from '@/lib/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    if (isDevMode()) {
-      // In dev mode, just return success
-      return Response.json({ success: true });
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
     }
 
-    // Get the user from the auth header
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const userId = authResult.user!.id;
+
+    if (isMockMode()) {
+      // In mock mode, just return success
+      console.log(`[${getTestMode()}] Mock privacy consent recorded`);
+      return NextResponse.json({ success: true });
     }
 
-    // Get user session
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    // In DEV/LIVE mode, update the database
+    console.log(`[${getTestMode()}] Recording privacy consent for user ${userId}`);
 
-    if (userError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Get authenticated Supabase client (with user's JWT token for RLS)
+    const supabase = getAuthenticatedSupabaseClient(request);
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Failed to create authenticated client' },
+        { status: 500 }
+      );
     }
 
     // Update privacy_consent_at in profiles table
     const { error } = await supabase
       .from('profiles')
       .update({ privacy_consent_at: new Date().toISOString() })
-      .eq('id', user.id);
+      .eq('id', userId);
 
     if (error) {
       console.error('Error updating privacy consent:', error);
-      return Response.json({ error: 'Failed to save consent' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to save consent' },
+        { status: 500 }
+      );
     }
 
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Privacy consent error:', error);
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

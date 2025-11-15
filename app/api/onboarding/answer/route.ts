@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth-utils';
+import { requireAuth, getAuthenticatedSupabaseClient } from '@/lib/auth-utils';
 import { getQuestionById } from '@/lib/onboarding-questions';
-import { supabase, isMockMode, getTestMode } from '@/lib/supabase';
+import { isMockMode, getTestMode } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,6 +46,15 @@ export async function POST(request: NextRequest) {
       // In DEV/LIVE mode, save to database
       console.log(`[${getTestMode()}] Saving answer for user ${userId}, question ${question_id}`);
 
+      // Get authenticated Supabase client (with user's JWT token for RLS)
+      const supabase = getAuthenticatedSupabaseClient(request);
+      if (!supabase) {
+        return NextResponse.json(
+          { error: 'Failed to create authenticated client' },
+          { status: 500 }
+        );
+      }
+
       const { error } = await supabase
         .from('onboarding_response')
         .upsert({
@@ -80,6 +89,8 @@ export async function POST(request: NextRequest) {
           completion_percentage: completionPercentage,
           is_completed: completionPercentage === 100,
           last_updated: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id'
         });
 
       return NextResponse.json({
